@@ -205,9 +205,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 message:
                     'Failed to register. Please check your details and try again!');
           }
-
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (ctxt) => ChooseCategories()));
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
