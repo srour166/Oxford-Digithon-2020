@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:routine/utils/firebase.dart';
+import 'package:routine/utils/ActivityCategory.dart';
 
 class ChooseCategories extends StatefulWidget {
   const ChooseCategories();
@@ -7,7 +9,9 @@ class ChooseCategories extends StatefulWidget {
 }
 
 class _ChooseCategoriesState extends State<ChooseCategories> {
-  List<int> selectedpics = [];
+  List<ActivityCategory> categories = [];
+  List<ActivityCategory> selectedCategories = [];
+
   Widget _donebutton() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -38,42 +42,48 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
       appBar: new AppBar(
         title: new Text('Pick your interests'),
       ),
-      body: new GridView.extent(
-          maxCrossAxisExtent: 250.0,
-          mainAxisSpacing: 5.0,
-          crossAxisSpacing: 5.0,
-          padding: const EdgeInsets.all(5.0),
-          children: [..._buildGridTiles(8), _donebutton()]),
-    );
-  }
+      body: FutureBuilder<List<ActivityCategory>>(
+          future: FirebaseUtils().getCategories(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Container();
 
-  List<Widget> _buildGridTiles(numberOfTiles) {
-    List<Container> containers =
-        new List<Container>.generate(numberOfTiles, (int index) {
-      final imageName = index < 9
-          ? 'images/image0${index + 1}.jpeg'
-          : 'images/image${index + 1}.jpeg';
-      return new Container(
-        child: GestureDetector(
-            onTap: () {
-              setState(() {
-                if (selectedpics.contains(index)) {
-                  selectedpics.remove(index);
-                } else {
-                  selectedpics.add(index);
-                }
-              });
-              print("pressing image");
-            },
-            child: selectedpics.contains(index)
-                ? ColorFiltered(
-                    colorFilter:
-                        ColorFilter.mode(Colors.red[100], BlendMode.modulate),
-                    child: Image.asset(imageName, fit: BoxFit.fill))
-                : Image.asset(imageName, fit: BoxFit.fill)),
-      );
-    });
-    return containers;
+            int numberOfTiles = snapshot.data.length;
+            return Column(
+              children: <Widget>[
+                GridView.builder(
+                    itemCount: numberOfTiles,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    padding: const EdgeInsets.all(5.0),
+                    itemBuilder: (ctxt, index) {
+                      ActivityCategory category = categories[index];
+                      final imageName = category.imageUrl;
+
+                      return Container(
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (selectedCategories.contains(category)) {
+                                  selectedCategories.remove(category);
+                                } else {
+                                  selectedCategories.add(category);
+                                }
+                              });
+                            },
+                            child: selectedCategories.contains(index)
+                                ? ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                        Colors.red[100], BlendMode.modulate),
+                                    child: Image.network(imageName,
+                                        fit: BoxFit.fill))
+                                : Image.asset(imageName, fit: BoxFit.fill)),
+                      );
+                    }),
+                _donebutton(),
+              ],
+            );
+          }),
+    );
   }
 }
 
