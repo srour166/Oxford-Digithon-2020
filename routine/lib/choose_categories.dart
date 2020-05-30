@@ -8,6 +8,30 @@ class ChooseCategories extends StatefulWidget {
 
 class _ChooseCategoriesState extends State<ChooseCategories> {
   List<int> selectedpics = [];
+  Widget _donebutton() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {},
+        padding: EdgeInsets.all(15.0),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        color: Colors.white,
+        child: Text(
+          'DONE',
+          style: TextStyle(
+              color: Color(0xFF527DAA),
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -15,12 +39,11 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
         title: new Text('Pick your interests'),
       ),
       body: new GridView.extent(
-        maxCrossAxisExtent: 250.0,
-        mainAxisSpacing: 5.0,
-        crossAxisSpacing: 5.0,
-        padding: const EdgeInsets.all(5.0),
-        children: _buildGridTiles(8),
-      ),
+          maxCrossAxisExtent: 250.0,
+          mainAxisSpacing: 5.0,
+          crossAxisSpacing: 5.0,
+          padding: const EdgeInsets.all(5.0),
+          children: [..._buildGridTiles(8), _donebutton()]),
     );
   }
 
@@ -52,4 +75,9 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
     });
     return containers;
   }
+}
+
+@override
+Widget build(BuildContext context) {
+  throw UnimplementedError();
 }
