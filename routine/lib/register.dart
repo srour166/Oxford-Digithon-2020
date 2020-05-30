@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:routine/utils/mongo.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -65,7 +66,10 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           RaisedButton(
             child: Text('Register'),
-            onPressed: () {},
+            onPressed: () async {
+              await MongoHelpers()
+                  .register("shubham.jain@hotmail.co.uk", "testtest");
+            },
             color: Colors.blue,
             textColor: Colors.white,
           )
