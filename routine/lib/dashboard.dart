@@ -99,6 +99,7 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
                 ),
               ),
               Center(
+                // CIRCLE PERCENTAGE
                 child: CircularPercentIndicator(
                   radius: 130.0,
                   backgroundColor: Colors.white38,
