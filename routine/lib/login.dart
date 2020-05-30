@@ -45,7 +45,60 @@ class _LoginScreenState extends State<LoginScreen> {
                   Icons.email,
                   color: Colors.white,
                 ),
-                hintText: 'Enter your Email'),
+                hintText: 'Enter your Password',
+                hintStyle: TextStyle(
+                  color: Colors.white54,
+                  fontFamily: 'OpenSans',
+                )),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Password',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans',
+            )),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xFF6CA8F1),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          height: 60.0,
+          child: TextField(
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: Colors.white,
+                ),
+                hintText: 'Enter your Password',
+                hintStyle: TextStyle(
+                  color: Colors.white54,
+                  fontFamily: 'OpenSans',
+                )),
           ),
         ),
       ],
@@ -101,7 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   _buildEmailTF(),
                   SizedBox(
                     height: 30.0,
-                  )
+                  ),
+                  _buildPassword(),
                 ],
               ),
             ),
