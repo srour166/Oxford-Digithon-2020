@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:routine/choose_categories.dart';
+import 'main.dart';
+import 'register.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -45,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Icons.email,
                   color: Colors.white,
                 ),
-                hintText: 'Enter your Password',
+                hintText: 'Enter your Email',
                 hintStyle: TextStyle(
                   color: Colors.white54,
                   fontFamily: 'OpenSans',
@@ -105,6 +108,64 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildLoginBtn() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () {
+          print("pressing");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (ctxt) => (ChooseCategories())));
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'LOGIN',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegisterBtn() {
+    return GestureDetector(
+      onTap: () => print('Sign Up Button Pressed'),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'Don\'t have an Account? ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            TextSpan(
+              text: 'Register',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Sign In',
+                    'Log In',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'OpenSans',
@@ -156,6 +217,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 30.0,
                   ),
                   _buildPassword(),
+                  _buildLoginBtn(),
+                  _buildRegisterBtn()
                 ],
               ),
             ),
