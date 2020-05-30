@@ -102,8 +102,3 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
     );
   }
 }
-
-@override
-Widget build(BuildContext context) {
-  throw UnimplementedError();
-}
