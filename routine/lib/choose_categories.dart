@@ -58,6 +58,7 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseUtils().getUserPreferences();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Pick your interests'),

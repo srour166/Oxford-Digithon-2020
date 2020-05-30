@@ -79,4 +79,15 @@ class FirebaseUtils {
     final ref = db.reference();
     ref.child('activities');
   }
+
+  Future<String> getUserPreferences() async {
+    final ref = _db.reference();
+    FirebaseUser currentUser = await _auth.currentUser();
+    if (currentUser == null) return null;
+
+    final DataSnapshot userPreferences =
+        (await ref.child('users').child(currentUser.uid).once());
+    print(userPreferences.value);
+    return userPreferences.value;
+  }
 }
