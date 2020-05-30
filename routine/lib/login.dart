@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:routine/choose_categories.dart';
+import 'package:routine/dashboard.dart';
 import 'package:routine/register.dart';
 
 import 'package:routine/utils/helpers.dart';
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (result) {
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (ctxt) => (ChooseCategories())));
+                MaterialPageRoute(builder: (ctxt) => (MyDashboardPage())));
           } else {
             showAlertDialog(context,
                 title: 'Failed to login',
