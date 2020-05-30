@@ -28,7 +28,6 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseUtils().getCategories();
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(

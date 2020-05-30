@@ -1,19 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:routine/utils/Category.dart' as prefix;
+import 'package:routine/utils/ActivityCategory.dart';
 
 class FirebaseUtils {
   static final FirebaseUtils _singleton = FirebaseUtils._internal();
+  static FirebaseAuth _auth;
+  static FirebaseDatabase _db;
 
   factory FirebaseUtils() => _singleton;
 
-  FirebaseUtils._internal();
+  FirebaseUtils._internal() {
+    _auth = FirebaseAuth.instance;
+    _db = FirebaseDatabase.instance;
+  }
 
   Future<bool> handleLogin(
       {@required String email, @required String password}) async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
     try {
       final AuthResult authResult = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -29,8 +32,6 @@ class FirebaseUtils {
 
   Future<bool> handleRegister(
       {@required String email, @required String password}) async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-
     bool result = false;
     try {
       final AuthResult authResult = await _auth.createUserWithEmailAndPassword(
@@ -46,14 +47,32 @@ class FirebaseUtils {
     return result;
   }
 
-  Future<Category> getCategories() async {
-    final db = FirebaseDatabase.instance;
-    final ref = db.reference();
-    final DataSnapshot categories = (await ref.child('categories').once());
-    print(categories.value);
+  Future<List<ActivityCategory>> getCategories() async {
+    final ref = _db.reference();
+    final DataSnapshot categoriesSnapshot =
+        (await ref.child('categories').once());
+
+    Map categories = categoriesSnapshot.value;
+    List<ActivityCategory> categoryObjects = [];
+    categories.entries.forEach((element) {
+      categoryObjects.add(ActivityCategory(
+          name: element.key, imageUrl: element.value['image']));
+    });
+
+    return categoryObjects;
   }
 
-  Future<bool> setUserPreferences(List<Category> categories) {}
+  Future<bool> setUserPreferences(List<ActivityCategory> categories) async {
+    final ref = _db.reference();
+    FirebaseUser currentUser = await _auth.currentUser();
+    if (currentUser == null) return false;
+
+    await ref.child('users').child(currentUser.uid).set({
+      'categories': categories.map((e) => e.name).join(','),
+    });
+
+    return true;
+  }
 
   Future<void> getActivity() async {
     final db = FirebaseDatabase.instance;
