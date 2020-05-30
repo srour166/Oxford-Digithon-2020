@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:routine/utils/ActivityCategory.dart';
+import 'package:routine/utils/Activity.dart';
 
 class FirebaseUtils {
   static final FirebaseUtils _singleton = FirebaseUtils._internal();
@@ -45,6 +46,26 @@ class FirebaseUtils {
     }
 
     return result;
+  }
+
+  Future<List<Activity>> getActivities() async {
+    final ref = _db.reference();
+    final DataSnapshot categoriesSnapshot =
+        (await ref.child('activities').once());
+
+    print(categoriesSnapshot.value);
+    List categories = categoriesSnapshot.value;
+    List<Activity> categoryObjects = [];
+    categories.forEach((element) {
+      if (element != null) {
+        categoryObjects.add(Activity(
+            name: element["name"],
+            description: element["description"],
+            categories: element["categories"]));
+      }
+    });
+
+    return categoryObjects;
   }
 
   Future<List<ActivityCategory>> getCategories() async {
