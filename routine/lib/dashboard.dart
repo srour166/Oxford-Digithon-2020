@@ -37,25 +37,16 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.bottomLeft,
+                  begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.indigoAccent, Colors.indigoAccent])),
+                  colors: [Colors.blue, Colors.indigoAccent])),
           child: Column(children: <Widget>[
             Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.indigoAccent, Colors.blue])),
-              // color: Colors.pink,
-            ),
+
+                // color: Colors.pink,
+                ),
             Container(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 48),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomRight,
-                      end: Alignment.topLeft,
-                      colors: [Colors.blue, Colors.indigoAccent])),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -300,11 +291,6 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
 
             // categories
             Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Colors.blue, Colors.indigoAccent])),
                 child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.symmetric(),
