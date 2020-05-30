@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:routine/choose_categories.dart';
-import 'main.dart';
-import 'register.dart';
+import 'package:routine/login.dart';
+
+import 'package:routine/utils/helpers.dart';
+import 'package:routine/utils/firebase.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,53 +12,9 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  Widget _buildName() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('Name',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'OpenSans',
-            )),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: Color(0xFF6CA8F1),
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 6.0,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          height: 60.0,
-          child: TextField(
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                prefixIcon: Icon(
-                  Icons.email,
-                  color: Colors.white,
-                ),
-                hintText: 'Enter your Full Name',
-                hintStyle: TextStyle(
-                  color: Colors.white54,
-                  fontFamily: 'OpenSans',
-                )),
-          ),
-        ),
-      ],
-    );
-  }
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   Widget _buildEmailTF() {
     return Column(
@@ -83,7 +41,14 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _emailController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -96,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Icons.email,
                   color: Colors.white,
                 ),
-                hintText: 'Enter your Password',
+                hintText: 'Enter your Email',
                 hintStyle: TextStyle(
                   color: Colors.white54,
                   fontFamily: 'OpenSans',
@@ -132,7 +97,14 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _passwordController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter a password';
+              }
+              return null;
+            },
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -181,7 +153,16 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _confirmPasswordController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter a password';
+              } else if (value != _passwordController.text) {
+                return 'Passwords must match';
+              }
+              return null;
+            },
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -211,10 +192,22 @@ class _RegisterPageState extends State<RegisterPage> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
-          print("pressing");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (ctxt) => (ChooseCategories())));
+        onPressed: () async {
+          final result = await FirebaseUtils().handleRegister(
+              email: _emailController.text, password: _passwordController.text);
+
+          if (result) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (ctxt) => ChooseCategories()));
+          } else {
+            showAlertDialog(context,
+                title: 'Failed to register',
+                message:
+                    'Failed to register. Please check your details and try again!');
+          }
+
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (ctxt) => ChooseCategories()));
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -237,7 +230,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildLoginBtn() {
     return GestureDetector(
-      onTap: () => print('login Button Pressed'),
+      onTap: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctxt) => LoginScreen())),
       child: RichText(
         text: TextSpan(
           children: [
@@ -309,10 +303,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(height: 30.0),
-                  _buildName(),
-                  SizedBox(
-                    height: 20.0,
-                  ),
                   _buildEmailTF(),
                   SizedBox(
                     height: 20.0,

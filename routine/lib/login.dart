@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:routine/choose_categories.dart';
-import 'main.dart';
-import 'register.dart';
+import 'package:routine/register.dart';
+
+import 'package:routine/utils/helpers.dart';
+import 'package:routine/utils/firebase.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,6 +12,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   Widget _buildEmailTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _emailController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -84,7 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _passwordController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -114,25 +133,32 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
-          print("pressing");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (ctxt) => (ChooseCategories())));
+        onPressed: () async {
+          final result = await FirebaseUtils().handleLogin(
+              email: _emailController.text, password: _passwordController.text);
+
+          if (result) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (ctxt) => (ChooseCategories())));
+          } else {
+            showAlertDialog(context,
+                title: 'Failed to login',
+                message:
+                    'Failed to login. Please check your details and try again!');
+          }
         },
         padding: EdgeInsets.all(15.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         color: Colors.white,
         child: Text(
           'LOGIN',
           style: TextStyle(
-            color: Color(0xFF527DAA),
-            letterSpacing: 1.5,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
-          ),
+              color: Color(0xFF527DAA),
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans'),
         ),
       ),
     );
@@ -140,25 +166,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRegisterBtn() {
     return GestureDetector(
-      onTap: () => print('Sign Up Button Pressed'),
+      onTap: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctxt) => RegisterPage())),
       child: RichText(
         text: TextSpan(
           children: [
             TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
-              ),
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w400),
             ),
             TextSpan(
               text: 'Register',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -176,20 +201,16 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  Color(0xFF73AEF5),
-                  Color(0xFF61A4F1),
-                  Color(0xFF478DE0),
-                  Color(0xFF398AE5),
-                ],
-                    stops: [
-                  0.1,
-                  0.4,
-                  0.7,
-                  0.9
-                ])),
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF73AEF5),
+                Color(0xFF61A4F1),
+                Color(0xFF478DE0),
+                Color(0xFF398AE5),
+              ],
+              stops: [0.1, 0.4, 0.7, 0.9],
+            )),
           ),
           Container(
             height: double.infinity,

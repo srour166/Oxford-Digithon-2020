@@ -1,4 +1,4 @@
-package com.example.routine
+package tech.nousham.routine
 
 import io.flutter.embedding.android.FlutterActivity
 
