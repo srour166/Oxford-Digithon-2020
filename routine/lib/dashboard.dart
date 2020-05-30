@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:routine/utils/firebase.dart';
 
+import 'package:routine/utils/helpers.dart';
+import 'package:routine/utils/firebase.dart';
+
 final Color accentBackgroundColor = const Color(0xFF7de3fa);
 final Color midBackgroundColor = const Color(0xFF2f1cff);
 
