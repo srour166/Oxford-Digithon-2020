@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:routine/utils/ActivityCategory.dart';
 import 'package:routine/utils/Activity.dart';
+import 'package:routine/utils/User.dart';
 
 class FirebaseUtils {
   static final FirebaseUtils _singleton = FirebaseUtils._internal();
@@ -50,21 +51,24 @@ class FirebaseUtils {
 
   Future<List<Activity>> getActivities() async {
     final ref = _db.reference();
-    final DataSnapshot categoriesSnapshot =
+    final DataSnapshot activitiesSnapshot =
         (await ref.child('activities').once());
 
-    List categories = categoriesSnapshot.value;
-    List<Activity> categoryObjects = [];
-    categories.forEach((element) {
+    List activities = activitiesSnapshot.value;
+    List<Activity> activityObjects = [];
+
+    for (int i = 0; i < activities.length; i++) {
+      Map element = activities[i];
       if (element != null) {
-        categoryObjects.add(Activity(
+        activityObjects.add(Activity(
+            id: i,
             name: element["name"],
             description: element["description"],
             categories: element["categories"]));
       }
-    });
+    }
 
-    return categoryObjects;
+    return activityObjects;
   }
 
   Future<List<ActivityCategory>> getCategories() async {
@@ -94,29 +98,109 @@ class FirebaseUtils {
     return true;
   }
 
+  Future<bool> setUserNewActivity(Activity activity) async {
+    final ref = _db.reference();
+    FirebaseUser currentUser = await _auth.currentUser();
+    if (currentUser == null) return false;
+
+    final DataSnapshot userData =
+        await ref.child('users').child(currentUser.uid).once();
+
+    Map userMap = userData.value;
+    userMap['currentActivity'] = activity.id;
+
+    await ref.child('users').child(currentUser.uid).set(userMap);
+    return true;
+  }
+
+  Future<bool> setUserCompletedActivity(Activity activity) async {
+    final ref = _db.reference();
+    FirebaseUser currentUser = await _auth.currentUser();
+    if (currentUser == null) return false;
+
+    final DataSnapshot userData =
+        await ref.child('users').child(currentUser.uid).once();
+
+    Map userMap = userData.value;
+    if (userMap.containsKey('activitiesCompleted')) {
+      userMap['activitiesCompleted'] = [
+        ...(userMap['activitiesCompleted'] as List),
+        activity.id
+      ];
+    } else {
+      userMap['activitiesCompleted'] = [activity.id];
+    }
+
+    userMap['currentActivity'] = null;
+    await ref.child('users').child(currentUser.uid).set(userMap);
+    return true;
+  }
+
+  Future<bool> userSkipCurrentActivity() async {
+    final ref = _db.reference();
+    FirebaseUser currentUser = await _auth.currentUser();
+    if (currentUser == null) return false;
+
+    final DataSnapshot userData =
+        await ref.child('users').child(currentUser.uid).once();
+
+    Map userMap = userData.value;
+    userMap['currentActivity'] = null;
+    await ref.child('users').child(currentUser.uid).set(userMap);
+    return true;
+  }
+
   Future<void> getActivity() async {
     final db = FirebaseDatabase.instance;
     final ref = db.reference();
     ref.child('activities');
   }
 
-  Future<List<String>> getUserPreferences() async {
+  Future<User> getUser() async {
     final ref = _db.reference();
     FirebaseUser currentUser = await _auth.currentUser();
-    if (currentUser == null) return const [];
+    if (currentUser == null) return null;
 
-    final DataSnapshot userPreferences =
+    final DataSnapshot userData =
         (await ref.child('users').child(currentUser.uid).once());
-    return userPreferences.value == null
-        ? []
-        : userPreferences.value['categories'].toString().split(',');
+
+    Map userMap = userData.value;
+    print(userMap);
+    print(userMap['activitiesCompleted']);
+    return User(
+      categories: userMap['categories'] == null
+          ? []
+          : userMap['categories'].toString().split(','),
+      activitiesCompleted: userMap['activitiesCompleted'] == null
+          ? []
+          : userMap['activitiesCompleted'].cast<int>(),
+      currentActivity: userMap['currentActivity'],
+    );
+  }
+
+  Future<int> getUserCurrentActivity() async {
+    final User user = await getUser();
+    return user.currentActivity;
+  }
+
+  Future<List<int>> getUserCompletedActivites() async {
+    final User user = await getUser();
+    return user.activitiesCompleted;
+  }
+
+  Future<List<String>> getUserPreferences() async {
+    final User user = await getUser();
+    return user.categories;
   }
 
   Future<List<Activity>> getUserMatchingActivities() async {
-    List<String> userPreferences = await getUserPreferences();
+    final User user = await getUser();
+    List<String> userPreferences = user.categories;
     List<Activity> allActivites = await getActivities();
     List<Activity> matchingActivites = allActivites
-        .where((activity) => userPreferences.contains(activity.categories))
+        .where((activity) =>
+            userPreferences.contains(activity.categories) &&
+            !user.activitiesCompleted.contains(activity.id))
         .toList();
 
     if (matchingActivites.isEmpty) return allActivites;
