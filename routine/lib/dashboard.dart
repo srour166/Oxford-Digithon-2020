@@ -5,6 +5,8 @@ import 'package:routine/utils/firebase.dart';
 import 'package:routine/utils/helpers.dart';
 import 'package:routine/utils/firebase.dart';
 
+import 'package:routine/utils/Activity.dart';
+
 final Color accentBackgroundColor = const Color(0xFF7de3fa);
 final Color midBackgroundColor = const Color(0xFF2f1cff);
 
@@ -28,6 +30,20 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+        body: FutureBuilder<List<Activity>>(
+            future: FirebaseUtils().getActivities(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return Container();
+
+              int numberOfCards = snapshot.data.length;
+
+              print(snapshot.data);
+              for (int i = 0; i < numberOfCards; i++) {
+                print(snapshot.data[i]);
+              }
+              return Container(color: Colors.green);
+            }));
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
