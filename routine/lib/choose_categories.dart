@@ -16,11 +16,49 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
 
   Widget _donebutton() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
-      child: RaisedButton(
-        elevation: 5.0,
-        onPressed: () async {
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xFF73AEF5),
+          Color(0xFF61A4F1),
+          Color(0xFF478DE0),
+          Color(0xFF398AE5),
+        ],
+        stops: [0.1, 0.4, 0.7, 0.9],
+      )),
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      child: GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9],
+              )),
+          padding: EdgeInsets.all(10),
+          child: Text(
+            'DONE',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans',
+            ),
+          ),
+        ),
+        onTap: () async {
           if (!(await FirebaseUtils().setUserPreferences(selectedCategories))) {
             await showAlertDialog(context,
                 title: 'Error saving interests',
@@ -31,19 +69,6 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
                 MaterialPageRoute(builder: (ctxt) => MyDashboardPage()));
           }
         },
-        padding: EdgeInsets.all(15.0),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-        color: Colors.white,
-        child: Text(
-          'DONE',
-          style: TextStyle(
-              color: Color(0xFF527DAA),
-              letterSpacing: 1.5,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'OpenSans'),
-        ),
       ),
     );
   }
