@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:routine/login.dart';
-import 'package:routine/register.dart';
 import 'package:routine/dashboard.dart';
 
 void main() {
+  FirebaseMessaging().requestNotificationPermissions();
   runApp(MyApp());
 }
 
