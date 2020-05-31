@@ -5,7 +5,11 @@ import 'package:routine/login.dart';
 import 'package:routine/dashboard.dart';
 
 void main() {
-  FirebaseMessaging().requestNotificationPermissions();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  FirebaseMessaging()
+    ..requestNotificationPermissions()
+    ..subscribeToTopic('daily_reminder');
   runApp(MyApp());
 }
 
