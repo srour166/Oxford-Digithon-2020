@@ -10,6 +10,8 @@ import 'package:routine/utils/Activity.dart';
 final Color accentBackgroundColor = const Color(0xFF7de3fa);
 final Color midBackgroundColor = const Color(0xFF2f1cff);
 
+List<Activity> activityList;
+
 class MyDashboardPage extends StatefulWidget {
   MyDashboardPage({Key key, this.title}) : super(key: key);
 
@@ -30,20 +32,6 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: FutureBuilder<List<Activity>>(
-            future: FirebaseUtils().getActivities(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return Container();
-
-              int numberOfCards = snapshot.data.length;
-
-              print(snapshot.data);
-              for (int i = 0; i < numberOfCards; i++) {
-                print(snapshot.data[i]);
-              }
-              return Container(color: Colors.green);
-            }));
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -308,118 +296,59 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
                 ],
               ),
             ),
+            FutureBuilder<List<Activity>>(
+                future: FirebaseUtils().getActivities(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Container();
 
+                  int numberOfCards = snapshot.data.length;
+
+                  print(snapshot.data);
+
+                  activityList = snapshot.data;
+
+                  for (int i = 0; i < numberOfCards; i++) {
+                    print(snapshot.data[i]);
+                  }
+                  return Container(
+                      child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(),
+                          child: Column(
+                            children: [
+                              for (var i in activityList)
+                                Card(
+                                    margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(12),
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: <Widget>[
+                                                  Text(i.name,
+                                                      style: TextStyle(
+                                                          fontSize: 18.0)),
+                                                  SizedBox(height: 6),
+                                                  Text(i.description,
+                                                      style: TextStyle(
+                                                          fontSize: 10.0)),
+                                                ]),
+                                            Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 280),
+                                                child: Icon(
+                                                  // need to
+                                                  Icons.public,
+                                                  size: 40,
+                                                )),
+                                          ],
+                                        )))
+                            ],
+                          )));
+                }),
             // categories
-            Container(
-                child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(),
-                    child: Column(
-                      children: <Widget>[
-                        Card(
-                            margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Text("Cook",
-                                              style: TextStyle(fontSize: 18.0)),
-                                          SizedBox(height: 6),
-                                          Text(
-                                              "Make dinner for you and your family.",
-                                              style: TextStyle(fontSize: 10.0)),
-                                        ]),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 280),
-                                        child: Icon(
-                                          Icons.public,
-                                          size: 40,
-                                        )),
-                                  ],
-                                ))),
-                        Card(
-                            margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Text("Workout",
-                                              style: TextStyle(fontSize: 18.0)),
-                                          SizedBox(height: 6),
-                                          Text("Exercise for 30 minutes today.",
-                                              style: TextStyle(fontSize: 10.0)),
-                                        ]),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 280),
-                                        child: Icon(
-                                          Icons.directions_walk,
-                                          size: 40,
-                                        )),
-                                  ],
-                                ))),
-                        Card(
-                            margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Text("Meditate",
-                                              style: TextStyle(fontSize: 18.0)),
-                                          SizedBox(height: 6),
-                                          Text(
-                                              "Take some time to relax and meditate.",
-                                              style: TextStyle(fontSize: 10.0)),
-                                        ]),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 280),
-                                        child: Icon(
-                                          Icons.sentiment_very_satisfied,
-                                          size: 40,
-                                        )),
-                                  ],
-                                ))),
-                        Card(
-                            margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Text("Read",
-                                              style: TextStyle(fontSize: 18.0)),
-                                          SizedBox(height: 6),
-                                          Text("Read a book or a magazine.",
-                                              style: TextStyle(fontSize: 10.0)),
-                                        ]),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 280),
-                                        child: Icon(
-                                          Icons.book,
-                                          size: 40,
-                                        )),
-                                  ],
-                                ))),
-                      ],
-                    )))
           ]),
         ));
   }
