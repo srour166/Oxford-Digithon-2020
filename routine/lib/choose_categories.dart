@@ -60,46 +60,62 @@ class _ChooseCategoriesState extends State<ChooseCategories> {
   Widget build(BuildContext context) {
     FirebaseUtils().getUserPreferences();
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Pick your interests'),
-      ),
-      bottomNavigationBar: _donebutton(),
-      body: FutureBuilder<List<ActivityCategory>>(
-          future: getCategories(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Container();
+        appBar: new AppBar(
+          title: new Text('Pick your interests'),
+        ),
+        bottomNavigationBar: _donebutton(),
+        body: Stack(children: <Widget>[
+          Container(
+              height: double.infinity,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9],
+              ))),
+          FutureBuilder<List<ActivityCategory>>(
+              future: getCategories(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Container();
 
-            int numberOfTiles = snapshot.data.length;
-            return GridView.builder(
-                itemCount: numberOfTiles,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                padding: const EdgeInsets.all(5.0),
-                itemBuilder: (ctxt, index) {
-                  ActivityCategory category = snapshot.data[index];
-                  final imageName = category.imageUrl;
+                int numberOfTiles = snapshot.data.length;
+                return GridView.builder(
+                    itemCount: numberOfTiles,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    padding: const EdgeInsets.all(5.0),
+                    itemBuilder: (ctxt, index) {
+                      ActivityCategory category = snapshot.data[index];
+                      final imageName = category.imageUrl;
 
-                  return Container(
-                    child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (selectedCategories.contains(category)) {
-                              selectedCategories.remove(category);
-                            } else {
-                              selectedCategories.add(category);
-                            }
-                          });
-                        },
-                        child: selectedCategories.contains(category)
-                            ? ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                    Colors.red[100], BlendMode.modulate),
-                                child:
-                                    Image.network(imageName, fit: BoxFit.fill))
-                            : Image.network(imageName, fit: BoxFit.fill)),
-                  );
-                });
-          }),
-    );
+                      return Container(
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (selectedCategories.contains(category)) {
+                                  selectedCategories.remove(category);
+                                } else {
+                                  selectedCategories.add(category);
+                                }
+                              });
+                            },
+                            child: selectedCategories.contains(category)
+                                ? ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                        Colors.red[100], BlendMode.modulate),
+                                    child: Image.network(imageName,
+                                        fit: BoxFit.fill))
+                                : Image.network(imageName, fit: BoxFit.fill)),
+                      );
+                    });
+              }),
+        ]));
   }
 }
