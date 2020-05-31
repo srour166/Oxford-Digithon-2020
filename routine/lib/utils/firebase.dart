@@ -53,7 +53,6 @@ class FirebaseUtils {
     final DataSnapshot categoriesSnapshot =
         (await ref.child('activities').once());
 
-    print(categoriesSnapshot.value);
     List categories = categoriesSnapshot.value;
     List<Activity> categoryObjects = [];
     categories.forEach((element) {
@@ -108,6 +107,19 @@ class FirebaseUtils {
 
     final DataSnapshot userPreferences =
         (await ref.child('users').child(currentUser.uid).once());
-    return userPreferences.value['categories'].toString().split(',');
+    return userPreferences.value == null
+        ? []
+        : userPreferences.value['categories'].toString().split(',');
+  }
+
+  Future<List<Activity>> getUserMatchingActivities() async {
+    List<String> userPreferences = await getUserPreferences();
+    List<Activity> allActivites = await getActivities();
+    List<Activity> matchingActivites = allActivites
+        .where((activity) => userPreferences.contains(activity.categories))
+        .toList();
+
+    print(matchingActivites);
+    return matchingActivites;
   }
 }
