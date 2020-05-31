@@ -28,6 +28,7 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
 
   Widget dashboard(context) {
     return Container(
+        height: double.infinity,
         padding: const EdgeInsets.only(left: 16, right: 16, top: 48),
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -273,7 +274,7 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
                   ],
                 )),
             FutureBuilder<List<Activity>>(
-                future: FirebaseUtils().getActivities(),
+                future: FirebaseUtils().getUserMatchingActivities(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
                   activityList = snapshot.data;
@@ -281,6 +282,11 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
                       padding: EdgeInsets.symmetric(),
                       child: Column(
                         children: [
+                          Text('Matched activities',
+                              textScaleFactor: 1.4,
+                              style: TextStyle(
+                                color: Colors.white,
+                              )),
                           for (var i in activityList)
                             Card(
                                 margin: EdgeInsets.fromLTRB(8, 8, 8, 8),

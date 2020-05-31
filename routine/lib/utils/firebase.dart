@@ -119,7 +119,7 @@ class FirebaseUtils {
         .where((activity) => userPreferences.contains(activity.categories))
         .toList();
 
-    print(matchingActivites);
+    if (matchingActivites.isEmpty) return allActivites;
     return matchingActivites;
   }
 }
