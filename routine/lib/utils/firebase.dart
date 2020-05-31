@@ -164,7 +164,7 @@ class FirebaseUtils {
     final DataSnapshot userData =
         (await ref.child('users').child(currentUser.uid).once());
 
-    Map userMap = userData.value;
+    Map userMap = userData.value ?? {};
     print(userMap);
     print(userMap['activitiesCompleted']);
     return User(
