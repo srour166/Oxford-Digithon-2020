@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:routine/utils/ActivityCategory.dart';
 import 'package:routine/utils/firebase.dart';
 import 'package:routine/utils/Activity.dart';
 import 'package:routine/utils/helpers.dart';
@@ -17,9 +18,14 @@ class MyDashboardPage extends StatefulWidget {
 
 class _MyDashboardPageState extends State<MyDashboardPage> {
   List<Activity> activityList;
+  List<ActivityCategory> categoryList;
+
+  Map<String, String> categoryMap = new Map();
   Activity acceptedActivity;
 
   Future<List<Activity>> getUserMatchingActivities({bool force = false}) async {
+    await getUserMatchingCategories();
+
     if (force || activityList == null) {
       activityList = await FirebaseUtils().getUserMatchingActivities();
     }
@@ -32,6 +38,24 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
     }
 
     return activityList;
+  }
+
+  Future<Map<String, String>> getUserMatchingCategories(
+      {bool force = false}) async {
+    if (force || categoryMap == null) {
+      categoryList = await FirebaseUtils().getCategories();
+    }
+
+    categoryList = await FirebaseUtils().getCategories();
+
+    print("THIS IS A TEST");
+    for (var y in categoryList) {
+      print(y.name);
+      print(y.imageUrl);
+      categoryMap.putIfAbsent(y.name, () => y.imageUrl);
+    }
+
+    return categoryMap;
   }
 
   @override
@@ -362,11 +386,9 @@ class _MyDashboardPageState extends State<MyDashboardPage> {
                                             ]),
                                         Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 280),
-                                            child: Icon(
-                                              // need to
-                                              Icons.public,
-                                              size: 40,
+                                                left: 225),
+                                            child: Image.network(
+                                              categoryMap[activity.categories],
                                             )),
                                       ],
                                     ),
